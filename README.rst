@@ -55,9 +55,14 @@ The following configuration values are available:
 :literal:`notify/track_message`:
     Same as :literal:`track_summary`, but supplies the more detailed message content of a notification.
 
-The following values are set by default:
+The following values are set by default::
 
-.. include:: mopidy_notify/ext.conf
+    [notify]
+    enabled = true
+    max_icon_size = 200
+    fallback_icon = notification-audio-play
+    track_summary = ${track}
+    track_message = ${artists} — ${album}
 
 
 The following variables are substituted for properties of the currently playing track when encountered in an template string:
