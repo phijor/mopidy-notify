@@ -34,7 +34,20 @@ Before starting Mopidy, you must add configuration for
 Mopidy-Notify to your Mopidy configuration file::
 
     [notify]
-    # TODO: Add example of extension config
+    enabled = true
+
+The following configuration values are available:
+
+:literal:`notify/max_icon_size`:
+    Maximum icon dimensions (width/heigh) in pixels for which track images/album covers are fetched.
+    For some tracks, images in multiple dimensions are available.
+    Mopidy-Notify will try to use the largest image possible for a notification.
+    Since some backends provide huge track images (as large as 3000x3000 pixels for Bandcamp MP3s), use this value to restrict which images are considered for display.
+    If no track images are smaller than :literal:`max_icon_size`, the smallest image available will be used.
+
+The following values are set by default:
+
+.. include:: mopidy_notify/ext.conf
 
 
 Project resources

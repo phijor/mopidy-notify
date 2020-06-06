@@ -28,6 +28,10 @@ class NotifyFrontend(pykka.ThreadingActor, CoreListener):
             user_agent=f"{Extension.dist_name}/{ext_version}",
         )
 
+    @property
+    def ext_config(self) -> Dict[str, Any]:
+        return self.config[Extension.ext_name]
+
     def track_playback_started(self, tl_track: TlTrack):
         self.show_notification(tl_track)
 
@@ -62,12 +66,14 @@ class NotifyFrontend(pykka.ThreadingActor, CoreListener):
         ).get().get(track_uri)
         logger.debug(
             "Found {} images, resolutions: {}".format(
-                len(images), ", ".join(f"{i.width}x{i.height}" for i in images)
+                len(images), ", ".join(f"{i.width}x{i.height}" for i in images) or "N/A"
             )
         )
 
         if images is not None and len(images) > 0:
-            acceptable = list(filter(lambda i: i.width <= 200, images))
+            acceptable = list(
+                filter(lambda i: i.width <= self.ext_config["max_icon_size"], images)
+            )
 
             width = attrgetter("width")
             if not acceptable:
