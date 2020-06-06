@@ -24,6 +24,8 @@ class Extension(ext.Extension):
         schema = super().get_config_schema()
         schema["max_icon_size"] = config.Integer(minimum=0)
         schema["fallback_icon"] = config.Path()
+        schema["track_summary"] = config.String()
+        schema["track_message"] = config.String()
         return schema
 
     def setup(self, registry):

@@ -48,10 +48,36 @@ The following configuration values are available:
 :literal:`notify/fallback_icon`:
     File path to an icon or the name of a default icon used as fallback if no track image/album cover is available for the currently playing track.
 
+:literal:`notify/track_summary`:
+    A `template string <https://docs.python.org/3/library/string.html#template-strings>`_ used to build a notification summary.
+    See below for values substituted.
+
+:literal:`notify/track_message`:
+    Same as :literal:`track_summary`, but supplies the more detailed message content of a notification.
+
 The following values are set by default:
 
 .. include:: mopidy_notify/ext.conf
 
+
+The following variables are substituted for properties of the currently playing track when encountered in an template string:
+
+:literal:`$track`:
+    Name of the currently playing track.
+:literal:`$album`:
+    The album in which this track is contained.
+:literal:`$artists`, :literal:`$composers`, :literal:`$performers`:
+    Comma separated list of artists/composers/performers for this track.
+:literal:`$genre`:
+    This track's genre.
+:literal:`$date`:
+    Release date.
+:literal:`$bitrate`:
+    Track bitrate in `kbit/s`.
+:literal:`$comment`:
+    Track comment.
+:literal:`$musicbrainz_id`:
+    Musicbrainz ID.
 
 Project resources
 =================

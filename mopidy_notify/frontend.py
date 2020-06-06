@@ -1,13 +1,14 @@
 import logging
 from operator import attrgetter
 from pathlib import Path
-from typing import Optional, Tuple
+from string import Template
+from typing import Optional, Tuple, Dict, Any, List
 
 import pykka
 import notify2
 
 from mopidy.core import CoreListener
-from mopidy.models import TlTrack, Track, Image
+from mopidy.models import TlTrack, Track, Image, Artist
 
 from .icon import IconStore
 from . import Extension, __version__ as ext_version
@@ -20,6 +21,10 @@ class NotifyFrontend(pykka.ThreadingActor, CoreListener):
         super().__init__()
         self.config: dict = config
         self.core: pykka.ActorProxy = core
+
+        self.summary_template = Template(self.ext_config["track_summary"])
+        self.message_template = Template(self.ext_config["track_message"])
+
         self.notify = notify2.init("mopidy")
         self.icon_store = IconStore(
             hostname=self.config["http"]["hostname"],
@@ -38,23 +43,34 @@ class NotifyFrontend(pykka.ThreadingActor, CoreListener):
     def track_playback_resumed(self, tl_track: TlTrack, time_position):
         self.show_notification(tl_track)
 
-    def show_notification(
-        self, tl_track: TlTrack,
-    ):
+    def show_notification(self, tl_track: TlTrack):
         track: Track
         (tl_id, track) = tl_track
 
-        artists = (
-            ", ".join(map(attrgetter("name"), track.artists)) or "[Unknown Artist]"
-        )
-        name = track.name
-        album = track.album.name
+        def preformat_artists(
+            artists: List[Artist], joiner=", ", default="[Unknown Artist]"
+        ):
+            return joiner.join(map(attrgetter("name"), artists)) or default
+
+        template_mapping = {
+            "track": track.name,
+            "artists": preformat_artists(track.artists),
+            "album": track.album.name,
+            "composers": preformat_artists(track.composers),
+            "performers": preformat_artists(track.performers),
+            "genre": track.genre,
+            "date": track.date,
+            "bitrate": track.bitrate,
+            "comment": track.comment,
+            "musicbrainz_id": track.musicbrainz_id,
+        }
+
         icon = self.fetch_icon(track.uri)
 
         logger.debug(f"Showing notification for {track.uri} (icon: {icon})")
         notification = notify2.Notification(
-            summary=f"{name}",
-            message=f"{artists} — {album}",
+            summary=self.summary_template.safe_substitute(template_mapping),
+            message=self.message_template.safe_substitute(template_mapping),
             icon=icon.as_uri()
             if icon is not None
             else self.ext_config["fallback_icon"],
