@@ -1,5 +1,5 @@
 from mopidy_notify import Extension
-from mopidy_notify import frontend as frontend_lib
+from mopidy_notify import frontend as frontend_lib  # noqa: F401
 
 
 def test_get_default_config():
@@ -16,9 +16,7 @@ def test_get_config_schema():
 
     schema = ext.get_config_schema()
 
-    # TODO Test the content of your config schema
-    # assert "username" in schema
-    # assert "password" in schema
-
-
-# TODO Write more tests
+    assert "max_icon_size" in schema
+    assert "fallback_icon" in schema
+    assert "track_summary" in schema
+    assert "track_message" in schema
