@@ -11,14 +11,22 @@ logger = logging.getLogger(__name__)
 
 CACHE_LOCATION = next(
     Path(path) / __name__
-    for path in [os.environ.get("XDG_RUNTIME_DIR"), os.environ.get("TMP"), "/tmp"]
+    for path in [
+        os.environ.get("XDG_RUNTIME_DIR"),
+        os.environ.get("TMP"),
+        "/tmp",
+    ]
     if path is not None
 )
 
 
 class IconStore:
     def __init__(
-        self, hostname: str, port: int, proxy_config: Dict[str, str], user_agent: str
+        self,
+        hostname: str,
+        port: int,
+        proxy_config: Dict[str, str],
+        user_agent: str,
     ):
         self.cache_location: Path = self._init_cache_location()
         self.hostname: str = hostname

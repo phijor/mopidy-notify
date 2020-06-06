@@ -84,13 +84,17 @@ class NotifyFrontend(pykka.ThreadingActor, CoreListener):
         ).get().get(track_uri)
         logger.debug(
             "Found {} images, resolutions: {}".format(
-                len(images), ", ".join(f"{i.width}x{i.height}" for i in images) or "N/A"
+                len(images),
+                ", ".join(f"{i.width}x{i.height}" for i in images) or "N/A",
             )
         )
 
         if images is not None and len(images) > 0:
             acceptable = list(
-                filter(lambda i: i.width <= self.ext_config["max_icon_size"], images)
+                filter(
+                    lambda i: i.width <= self.ext_config["max_icon_size"],
+                    images,
+                )
             )
 
             width = attrgetter("width")
