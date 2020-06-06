@@ -45,6 +45,9 @@ The following configuration values are available:
     Since some backends provide huge track images (as large as 3000x3000 pixels for Bandcamp MP3s), use this value to restrict which images are considered for display.
     If no track images are smaller than :literal:`max_icon_size`, the smallest image available will be used.
 
+:literal:`notify/fallback_icon`:
+    File path to an icon or the name of a default icon used as fallback if no track image/album cover is available for the currently playing track.
+
 The following values are set by default:
 
 .. include:: mopidy_notify/ext.conf

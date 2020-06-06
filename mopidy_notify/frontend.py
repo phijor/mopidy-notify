@@ -55,7 +55,9 @@ class NotifyFrontend(pykka.ThreadingActor, CoreListener):
         notification = notify2.Notification(
             summary=f"{name}",
             message=f"{artists} — {album}",
-            icon=icon.as_uri() if icon is not None else "",
+            icon=icon.as_uri()
+            if icon is not None
+            else self.ext_config["fallback_icon"],
         )
         notification.show()
 

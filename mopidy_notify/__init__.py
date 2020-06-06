@@ -23,6 +23,7 @@ class Extension(ext.Extension):
     def get_config_schema(self):
         schema = super().get_config_schema()
         schema["max_icon_size"] = config.Integer(minimum=0)
+        schema["fallback_icon"] = config.Path()
         return schema
 
     def setup(self, registry):
