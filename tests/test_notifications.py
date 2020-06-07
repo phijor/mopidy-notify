@@ -1,11 +1,7 @@
 from pathlib import Path
 from unittest import mock
 
-from mopidy_notify.notifications import (
-    DEFAULT_TIMEOUT,
-    DbusNotifier,
-    Notification,
-)
+from mopidy_notify.notifications import DEFAULT_TIMEOUT, DbusNotifier, Notification
 
 
 def test_notification_default_timeout():
