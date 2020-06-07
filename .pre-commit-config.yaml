@@ -2,17 +2,17 @@ default_language_version:
   python: python3.8
 
 repos:
-- repo: https://github.com/timothycrosley/isort
-  rev: develop
-  hooks:
-    - id: isort
-      additional_dependencies:
-        - .[pyproject]
-- repo: https://github.com/ambv/black
-  rev: stable
-  hooks:
-    - id: black
 - repo: https://gitlab.com/pycqa/flake8
   rev: 3.8.2
   hooks:
   - id: flake8
+- repo: https://github.com/timothycrosley/isort
+  rev: 4.3.21
+  hooks:
+    - id: isort
+      additional_dependencies:
+        - isort[pyproject]
+- repo: https://github.com/ambv/black
+  rev: stable
+  hooks:
+    - id: black
