@@ -4,7 +4,6 @@ from pathlib import Path
 from string import Template
 from typing import Any, Dict, List, Optional, Tuple
 
-import notify2
 import pykka
 from mopidy.core import CoreListener
 from mopidy.models import Artist, Image, TlTrack, Track
@@ -12,6 +11,7 @@ from mopidy.models import Artist, Image, TlTrack, Track
 from . import Extension
 from . import __version__ as ext_version
 from .icon import IconStore
+from .notifications import DbusNotifier, Notification
 
 logger = logging.getLogger(__name__)
 
@@ -25,7 +25,7 @@ class NotifyFrontend(pykka.ThreadingActor, CoreListener):
         self.summary_template = Template(self.ext_config["track_summary"])
         self.message_template = Template(self.ext_config["track_message"])
 
-        self.notify = notify2.init("mopidy")
+        self.notifier = DbusNotifier("mopidy")
         self.icon_store = IconStore(
             hostname=self.config["http"]["hostname"],
             port=self.config["http"]["port"],
@@ -68,14 +68,14 @@ class NotifyFrontend(pykka.ThreadingActor, CoreListener):
         icon = self.fetch_icon(track.uri)
 
         logger.debug(f"Showing notification for {track.uri} (icon: {icon})")
-        notification = notify2.Notification(
+        notification = Notification(
             summary=self.summary_template.safe_substitute(template_mapping),
             message=self.message_template.safe_substitute(template_mapping),
             icon=icon.as_uri()
             if icon is not None
             else self.ext_config["fallback_icon"],
         )
-        notification.show()
+        self.notifier.show(notification)
 
     def fetch_icon(self, track_uri: str) -> Optional[Path]:
         logger.debug(f"Fetching notification icon for {track_uri}")
