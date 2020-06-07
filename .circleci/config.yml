@@ -19,6 +19,13 @@ jobs:
     docker:
       - image: mopidy/ci-python:3.8
     steps:
+      - run:
+          name: Installing system dependencies
+          command: |
+            sudo apt-get -qq -y update
+            sudo apt-get -qq -y install \
+              libdbus-1-3 \
+              libdbus-1-dev
       - checkout
       - restore_cache:
           name: Restoring tox cache
