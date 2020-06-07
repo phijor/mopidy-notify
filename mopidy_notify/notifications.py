@@ -27,13 +27,13 @@ class Notification:
 
 
 class DbusNotifier:
-    def __init__(self, appname: str, dbus: Optional[dbus.SessionBus] = None):
+    def __init__(self, appname: str, session_bus: Optional[dbus.SessionBus] = None):
         self.appname: str = appname
-        self.dbus = dbus or dbus.SessionBus()
-        self.object = self.dbus.get_object(
+        self.session_bus = session_bus or dbus.SessionBus()
+        self.object = self.session_bus.get_object(
             "org.freedesktop.Notifications", "/org/freedesktop/Notifications"
         )
-        self.interface = self.dbus.Interface(
+        self.interface = dbus.Interface(
             self.object, dbus_interface="org.freedesktop.Notifications"
         )
 

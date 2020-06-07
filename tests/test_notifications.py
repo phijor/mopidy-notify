@@ -36,11 +36,10 @@ def test_notification_some_hints():
 
 
 def test_notifier_show_update_id():
-    dbus_session = mock.Mock()
+    session_bus = mock.Mock()
 
-    notifier = DbusNotifier(appname="test", dbus=dbus_session)
-    dbus_session.get_object.assert_called_once()
-    dbus_session.Interface.assert_called_once()
+    notifier = DbusNotifier(appname="test", session_bus=session_bus)
+    session_bus.get_object.assert_called_once()
 
     ID = 1337
     notification = Notification()
