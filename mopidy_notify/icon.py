@@ -1,10 +1,10 @@
 import logging
 import os
-import requests
-from urllib.parse import urljoin, quote
 from pathlib import Path
 from typing import Dict
+from urllib.parse import quote, urljoin
 
+import requests
 from mopidy import httpclient
 
 logger = logging.getLogger(__name__)

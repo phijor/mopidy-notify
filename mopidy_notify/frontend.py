@@ -2,16 +2,16 @@ import logging
 from operator import attrgetter
 from pathlib import Path
 from string import Template
-from typing import Optional, Tuple, Dict, Any, List
+from typing import Any, Dict, List, Optional, Tuple
 
-import pykka
 import notify2
-
+import pykka
 from mopidy.core import CoreListener
-from mopidy.models import TlTrack, Track, Image, Artist
+from mopidy.models import Artist, Image, TlTrack, Track
 
+from . import Extension
+from . import __version__ as ext_version
 from .icon import IconStore
-from . import Extension, __version__ as ext_version
 
 logger = logging.getLogger(__name__)
 
@@ -79,9 +79,9 @@ class NotifyFrontend(pykka.ThreadingActor, CoreListener):
 
     def fetch_icon(self, track_uri: str) -> Optional[Path]:
         logger.debug(f"Fetching notification icon for {track_uri}")
-        images: Optional[Tuple[Image]] = self.core.library.get_images(
-            [track_uri]
-        ).get().get(track_uri)
+        images: Optional[Tuple[Image]] = (
+            self.core.library.get_images([track_uri]).get().get(track_uri)
+        )
         logger.debug(
             "Found {} images, resolutions: {}".format(
                 len(images),
