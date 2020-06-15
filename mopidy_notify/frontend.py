@@ -32,6 +32,7 @@ class NotifyFrontend(pykka.ThreadingActor, CoreListener):
             proxy_config=self.config["proxy"],
             user_agent=f"{Extension.dist_name}/{ext_version}",
         )
+        logger.info("Initialized desktop notification frontend")
 
     @property
     def ext_config(self) -> Dict[str, Any]:
