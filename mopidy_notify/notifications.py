@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Any, Dict, Optional, Union
 
-import dbus
+from pydbus import SessionBus
 
 DEFAULT_TIMEOUT = -1
 
@@ -27,18 +27,13 @@ class Notification:
 
 
 class DbusNotifier:
-    def __init__(self, appname: str, session_bus: Optional[dbus.SessionBus] = None):
+    def __init__(self, appname: str, session_bus: Optional[SessionBus] = None):
         self.appname: str = appname
-        self.session_bus = session_bus or dbus.SessionBus()
-        self.object = self.session_bus.get_object(
-            "org.freedesktop.Notifications", "/org/freedesktop/Notifications"
-        )
-        self.interface = dbus.Interface(
-            self.object, dbus_interface="org.freedesktop.Notifications"
-        )
+        self.session_bus = session_bus or SessionBus()
+        self.notifications = self.session_bus.get(".Notifications")
 
     def show(self, notification: Notification):
-        nid = self.interface.Notify(
+        nid = self.notifications.Notify(
             self.appname,
             notification.nid,
             notification.icon,
