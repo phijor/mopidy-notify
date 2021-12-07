@@ -18,7 +18,11 @@ CACHE_LOCATION = next(
 
 class IconStore:
     def __init__(
-        self, hostname: str, port: int, proxy_config: Dict[str, str], user_agent: str,
+        self,
+        hostname: str,
+        port: int,
+        proxy_config: Dict[str, str],
+        user_agent: str,
     ):
         self.cache_location: Path = self._init_cache_location()
         self.hostname: str = hostname

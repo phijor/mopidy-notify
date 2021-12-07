@@ -18,9 +18,9 @@ class Notification:
     ):
         self.nid: int = nid
         self.timeout: int = 0 if timeout is None else timeout
-        self.icon: str = "" if icon is None else icon.as_uri() if isinstance(
-            icon, Path
-        ) else icon
+        self.icon: str = (
+            "" if icon is None else icon.as_uri() if isinstance(icon, Path) else icon
+        )
         self.summary: str = summary
         self.message: str = message
         self.hints: dict = hints or dict()

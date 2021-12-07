@@ -92,7 +92,10 @@ class NotifyFrontend(pykka.ThreadingActor, CoreListener):
 
         if images is not None and len(images) > 0:
             acceptable = list(
-                filter(lambda i: i.width <= self.ext_config["max_icon_size"], images,)
+                filter(
+                    lambda i: i.width <= self.ext_config["max_icon_size"],
+                    images,
+                )
             )
 
             width = attrgetter("width")
