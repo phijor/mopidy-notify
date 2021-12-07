@@ -14,7 +14,7 @@ Mopidy-Notify
     :target: https://codecov.io/gh/phijor/mopidy-notify
     :alt: Test coverage
 
-Mopidy extension for showing desktop notifications
+Mopidy extension for showing desktop notifications on track change.
 
 
 Installation
