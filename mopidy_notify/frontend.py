@@ -78,11 +78,39 @@ class NotifyFrontend(pykka.ThreadingActor, CoreListener):
         )
         self.notifier.show(notification)
 
+    def get_images(self, track_uri: str) -> List[Image]:
+        try:
+            # Look up images for this track by its URL
+            images: dict[str, Tuple[Image]] = self.core.library.get_images(
+                [track_uri]
+            ).get(timeout=5.0)
+            # Images are indexed by URL, so get the list of images for this URL
+            return list(images.get(track_uri, ()))
+        except pykka.Timeout:
+            return []
+
+    def find_preferred_image(self, images: List[Image]) -> Optional[Image]:
+        """Find image in a list whose width is closest to config value `max_icon_size`.
+
+        Returns `None` if the given list is empty.
+        """
+
+        if not images:
+            return None
+
+        acceptable = [i for i in images if i.width <= self.ext_config["max_icon_size"]]
+
+        width = attrgetter("width")
+        if acceptable:
+            # Return the largest image below the maximum size.
+            return max(acceptable, key=width)
+        else:
+            # If there are no such images, return the smallest image overall.
+            return min(images, key=width)
+
     def fetch_icon(self, track_uri: str) -> Optional[Path]:
         logger.debug(f"Fetching notification icon for {track_uri}")
-        images: Optional[Tuple[Image]] = (
-            self.core.library.get_images([track_uri]).get().get(track_uri)
-        )
+        images = self.get_images(track_uri)
         logger.debug(
             "Found {} images, resolutions: {}".format(
                 len(images),
@@ -90,19 +118,8 @@ class NotifyFrontend(pykka.ThreadingActor, CoreListener):
             )
         )
 
-        if images is not None and len(images) > 0:
-            acceptable = list(
-                filter(
-                    lambda i: i.width <= self.ext_config["max_icon_size"],
-                    images,
-                )
-            )
-
-            width = attrgetter("width")
-            if not acceptable:
-                icon = min(images, key=width)
-            else:
-                icon = max(acceptable, key=width)
-            return self.icon_store.fetch(icon.uri)
-        else:
+        preferred = self.find_preferred_image(images)
+        if not preferred:
             return None
+        else:
+            return self.icon_store.fetch(preferred.uri)
