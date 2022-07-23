@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime
 from operator import attrgetter
 from pathlib import Path
 from string import Template
@@ -41,17 +42,21 @@ class NotifyFrontend(pykka.ThreadingActor, CoreListener):
     def track_playback_started(self, tl_track: TlTrack):
         self.show_notification(tl_track)
 
-    def track_playback_resumed(self, tl_track: TlTrack, time_position):
-        self.show_notification(tl_track)
+    def track_playback_resumed(self, tl_track: TlTrack, time_position: int):
+        self.show_notification(tl_track, time_position)
 
-    def show_notification(self, tl_track: TlTrack):
-        track: Track
-        (tl_id, track) = tl_track
+    def show_notification(self, tl_track: TlTrack, time_position: int = 0):
+        track: Track = tl_track.track
 
         def preformat_artists(
             artists: List[Artist], joiner=", ", default="[Unknown Artist]"
         ):
             return joiner.join(map(attrgetter("name"), artists)) or default
+
+        # time_position is the number of milliseconds since track start.
+        timestamp = datetime.utcfromtimestamp(time_position // 1000)
+        # Omit hour if the current running time is below one hour.
+        time_format = "{0:%H}:{0:%M}:{0:%S}" if timestamp.hour >= 1 else "{0:%M}:{0:%S}"
 
         template_mapping = {
             "track": track.name,
@@ -64,6 +69,7 @@ class NotifyFrontend(pykka.ThreadingActor, CoreListener):
             "bitrate": track.bitrate,
             "comment": track.comment,
             "musicbrainz_id": track.musicbrainz_id,
+            "time": time_format.format(timestamp),
         }
 
         icon = self.fetch_icon(track.uri)

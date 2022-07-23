@@ -75,6 +75,9 @@ The following variables are substituted for properties of the currently playing 
     Comma separated list of artists/composers/performers for this track.
 :literal:`$genre`:
     This track's genre.
+:literal:`$time`:
+    The current running time of this track, formatted `[HH:]MM:SS`.
+    Hours are omitted of running time is below one hour.
 :literal:`$date`:
     Release date.
 :literal:`$bitrate`:
