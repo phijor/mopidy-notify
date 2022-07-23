@@ -7,7 +7,6 @@ include pyproject.toml
 include tox.ini
 include .pre-commit-config.yaml
 
-recursive-include .circleci *
 recursive-include .github *
 
 include mopidy_*/ext.conf
