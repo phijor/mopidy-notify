@@ -1,7 +1,7 @@
 import logging
 import os
 from pathlib import Path
-from typing import Dict
+from typing import Dict, Optional
 from urllib.parse import quote, urljoin
 
 import requests
@@ -39,9 +39,10 @@ class IconStore:
         return CACHE_LOCATION
 
     @staticmethod
-    def _init_http_session(proxy: str, user_agent: str) -> requests.Session:
+    def _init_http_session(proxy: Optional[str], user_agent: str) -> requests.Session:
         session = requests.Session()
-        session.proxies.update({"http": proxy, "https": proxy})
+        if proxy:
+            session.proxies.update({"http": proxy, "https": proxy})
         session.headers.update({"user-agent": user_agent})
         return session
 
