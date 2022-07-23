@@ -5,7 +5,7 @@ from string import Template
 from typing import Any, Dict, List, Optional, Tuple
 
 import pykka
-from mopidy.core import CoreListener
+from mopidy.core.listener import CoreListener
 from mopidy.models import Artist, Image, TlTrack, Track
 
 from . import Extension
