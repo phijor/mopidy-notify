@@ -2,8 +2,13 @@
 Changelog
 *********
 
+v0.2.0
+======
 
-v0.1.0 (UNRELEASED)
-========================================
+- Substitute `${time}` in template strings for the running time of the current track
+
+
+v0.1.1
+======
 
 - Initial release.
