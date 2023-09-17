@@ -6,7 +6,7 @@ Mopidy-Notify
     :target: https://pypi.org/project/Mopidy-Notify/
     :alt: Latest PyPI version
 
-.. image:: https://img.shields.io/github/workflow/status/phijor/mopidy-notify/CI
+.. image:: https://img.shields.io/github/actions/workflow/status/phijor/mopidy-notify/ci.yml?branch=main
     :target: https://github.com/phijor/mopidy-notify/actions
     :alt: CI build status
 
