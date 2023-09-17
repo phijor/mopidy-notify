@@ -1,10 +1,10 @@
 import logging
 import pathlib
 
-import pkg_resources
+from importlib.metadata import version
 from mopidy import config, ext
 
-__version__ = pkg_resources.get_distribution("Mopidy-Notify").version
+__version__ = version("Mopidy-Notify")
 
 # TODO: If you need to log, use loggers named after the current Python module
 logger = logging.getLogger(__name__)
