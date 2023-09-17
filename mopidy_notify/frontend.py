@@ -17,6 +17,35 @@ from .notifications import DbusNotifier, Notification
 logger = logging.getLogger(__name__)
 
 
+def find_preferred_image(images: List[Image], preferred_size) -> Optional[Image]:
+    """Find image in a list whose width is closest to `preferred_size`.
+
+    Returns `None` if the given list is empty.
+    """
+
+    # Images may have `width` set to `None`.
+
+    # All images that have their width set
+    known_width = [i for i in images if i.width is not None]
+
+    # All images below the preferred size
+    acceptable = [i for i in known_width if i.width <= preferred_size]
+
+    width = attrgetter("width")
+    if acceptable:
+        # Prefer the largest image below the maximum size.
+        return max(acceptable, key=width)
+    elif known_width:
+        # If there are no such images, return the smallest image
+        # with known size
+        return min(known_width, key=width)
+    elif images:
+        # There's at least one image. Just pick the first.
+        return images[0]
+    else:
+        return None
+
+
 class NotifyFrontend(pykka.ThreadingActor, CoreListener):
     def __init__(self, config: dict, core: pykka.ActorProxy):
         super().__init__()
@@ -95,25 +124,6 @@ class NotifyFrontend(pykka.ThreadingActor, CoreListener):
         except pykka.Timeout:
             return []
 
-    def find_preferred_image(self, images: List[Image]) -> Optional[Image]:
-        """Find image in a list whose width is closest to config value `max_icon_size`.
-
-        Returns `None` if the given list is empty.
-        """
-
-        if not images:
-            return None
-
-        acceptable = [i for i in images if i.width <= self.ext_config["max_icon_size"]]
-
-        width = attrgetter("width")
-        if acceptable:
-            # Return the largest image below the maximum size.
-            return max(acceptable, key=width)
-        else:
-            # If there are no such images, return the smallest image overall.
-            return min(images, key=width)
-
     def fetch_icon(self, track_uri: str) -> Optional[Path]:
         logger.debug(f"Fetching notification icon for {track_uri}")
         images = self.get_images(track_uri)
@@ -124,7 +134,9 @@ class NotifyFrontend(pykka.ThreadingActor, CoreListener):
             )
         )
 
-        preferred = self.find_preferred_image(images)
+        preferred = find_preferred_image(
+            images, preferred_size=self.ext_config["max_icon_size"]
+        )
         if not preferred:
             return None
         else:
