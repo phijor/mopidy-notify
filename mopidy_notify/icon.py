@@ -1,8 +1,9 @@
 import logging
 import os
+from hashlib import md5
 from pathlib import Path
 from typing import Dict, Optional
-from urllib.parse import quote, urljoin
+from urllib.parse import urljoin
 
 import requests
 from mopidy import httpclient
@@ -63,4 +64,6 @@ class IconStore:
         return urljoin(f"http://{self.hostname}:{self.port}/", uri)
 
     def format_cache_target(self, uri: str) -> Path:
-        return self.cache_location / quote(uri, safe="")
+        return (
+            self.cache_location / md5(uri.encode(), usedforsecurity=False).hexdigest()
+        )
