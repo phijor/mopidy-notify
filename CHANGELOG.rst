@@ -2,6 +2,11 @@
 Changelog
 *********
 
+v0.2.2
+======
+
+- Avoid illegal characters filenames of icons in the cache (PR #3 by @nim65s)
+
 v0.2.1
 ======
 
